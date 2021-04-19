@@ -10,7 +10,13 @@ class File(name:String):FileSystemElement(name) {
         for (i in 0 until level){
             print("- ")
         }
-        this.ls()
+        println("$name")
     }
 
+    override fun listarArchivo() = println("$name")
+
+    override fun listarArchivoNombre(subtermino: String) {
+        if (subtermino in name) println("$name")
+        //if (name.contains(subtermino)) println("$name")
+    }
 }

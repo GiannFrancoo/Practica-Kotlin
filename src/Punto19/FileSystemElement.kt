@@ -8,4 +8,8 @@ abstract class FileSystemElement(val name:String) {
 
     abstract fun ls(level:Int)
 
+    abstract fun listarArchivo()
+
+    abstract fun listarArchivoNombre(subtermino:String)
+
 }

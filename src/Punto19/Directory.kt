@@ -19,4 +19,17 @@ open class Directory(name:String):FileSystemElement(name) {
         println("$name/")
         ListaElementos.forEach { it.ls(level + 1) }
     }
+
+    override fun listarArchivo(){
+        for(i in 0 until ListaElementos.size){
+            ListaElementos[i].listarArchivo()
+        }
+    }
+
+    override fun listarArchivoNombre(subtermino: String) {
+        for(i in 0 until ListaElementos.size){
+            ListaElementos[i].listarArchivoNombre(subtermino)
+        }
+    }
+
 }

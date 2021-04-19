@@ -31,8 +31,17 @@ fun main(args: Array<String>) {
     P.add(f6)
     B.add(Q)
 
-
+    //19
     RootDirectory.ls()
+    println()
+
+    //26
+    RootDirectory.listarArchivo()
+    println()
+
+    //27
+    RootDirectory.listarArchivoNombre("3")
+
 
 
 
