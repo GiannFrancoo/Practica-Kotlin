@@ -250,3 +250,40 @@ fun foo(name: String, number: Int = 42, toUpperCase: Boolean = false) =
 fun String.removeFirstLastChar() = this.drop(1).dropLast(1)
 fun Int.removeFirstLastDigit() = this.toString().removeFirstLastChar()
 infix fun Int.veces(num:Int): Int = this * num
+
+//Ejercicio 18
+class Piramide () {
+    infix fun createP(valor:Int)=createPyramid(valor);
+
+/*Ejercicio 25:  Implementar el ejemplo de libros y autores (class Book). Adem´as de mostrar la lista de autores,
+mostrar la lista de nombres de libros de un autor en particular*/
+class Book(val titulo:String, val autores:List<String>) {
+    //hacer funciones de imprimir por autores y libros de autores
+    /*val books= listOf(Book("Thursday Next",listOf("Jasper Fforde")),Book("Mort",listOf("Terry Pratchett")),Book("Good Omens)",listOf("Terry Pratchett", "Neil Gaiman")))
+    println(books.flatMap {it.autores}.toSet())
+    println(books.filter { it.autores.contains("Terry Pratchett") }.map(Book::titulo))
+    estos println van en el main ya que no tenemos funciones*/
+}
+
+//Ejercicio 29
+//Simplificar el siguiente algoritmo utilizando safe call operators.
+data class A(val b: String? = null, val c: Int? = null, val d: List<Boolean?>? = null)
+
+fun testNullables() {
+    val a1 = A("B1")
+    val a2 = A(c = 2)
+    val a3 = A(d = listOf(null, false, true, null))
+    val a4 = A()
+    val listA = listOf(a1, a2, a3, a4)
+
+    listA.forEach {
+        //Todo lo que esta dentro del let es cuando it.b NO es nulo.
+        //Todo lo que esta dentro del run es cuando it.b ES nulo.
+        it.b?.let { println(it) } ?: run {
+            it.c?.let { println(it) } ?: run {
+                it.d?.let { it.forEach { it?.let{print(it)} } ; println() } ?: run { println("all null") }
+            }
+        }
+
+    }
+}
