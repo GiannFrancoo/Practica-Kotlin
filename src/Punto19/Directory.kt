@@ -8,10 +8,6 @@ open class Directory(name:String):FileSystemElement(name) {
 
     fun add(obj:FileSystemElement) = ListaElementos.add(obj)
 
-    override fun ls() {
-        ls(1)
-    }
-
     override fun ls(level: Int) {
         for (i in 0 until level){
             print("- ")

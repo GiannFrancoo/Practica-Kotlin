@@ -114,8 +114,10 @@ fun main(args: Array<String>){
     //27 Resuelto en punto19
 
     //28 PREGUNTAR
-    //val conjuntoBichos = MutableSet<String>("Panda", "Rabbit", "Bear", "Penguin", "Kangaroo")
-    //whoTookTheCookie(conjuntoBichos)
+    val conjuntoBichos = listOf<String>("Panda", "Rabbit", "Bear", "Penguin", "Kangaroo")
+    whoTookTheCookie(conjuntoBichos)
+    //Idea de fibonacci
+    //listOf(1, 2, 3, 4, 5).reduce{ s1: Int, s2: Int -> s1 + s2 }
 
     //29
     //testNullables()
@@ -260,26 +262,26 @@ class Piramide () {
 
 fun ordenarListaAlfabetico(lista: ArrayList<String>) = lista.sort()
 
-fun ordenarListaLongitud(lista: ArrayList<String>) = lista.sortBy{it.length}
+fun ordenarListaLongitud(lista: ArrayList<String>) = lista.sortBy(String::length)
 
 //it listaString >> it string >> it char
-fun ordenarListaCaracterE(lista: ArrayList<String>) = lista.sortBy{ it.count{ it == 'e' } }
+fun ordenarListaCaracterE(lista: ArrayList<String>) = lista.sortBy{ elemento -> elemento.count{ it == 'e' } }
 
 //Preguntar
-fun esPrimoLista(n:Int): Boolean{
+fun esPrimoLista(n:Int): Boolean = when {
+    n <= 0 -> false
+    else ->
+        (2 until n).none { n % it == 0 }
+    /*
+    when {
+        n <= 0 -> false
+        else ->
+            (2 until n).filter { n % it == 0 }.isEmpty()
+    } */
 
-    //listOf(Int).divide({it / num})
-
-    for (i in 2..((n/2) + 1)){
-        println("$i")
-        if ((n % i) == 0) {
-            return false
-            break
-        }
-    }
-    return true
 }
 
+//Tratar de pasar a for each
 fun mostrarFrame(lista:ArrayList<String>){
 
     val masLargo = lista.maxOf { it.length }
@@ -308,21 +310,17 @@ class Biblioteca(val books:ArrayList<Book>){
     fun add(b:Book) = books.add(b)
 
     fun mostrarAutores() = println(books.flatMap {it.autores}.toSet())
-   fun mostrarLibrosDeAutorParticular(autor:String) = println(books.filter { it.autores.contains("$autor") }.map(Book::titulo))
+    fun mostrarLibrosDeAutorParticular(autor:String) = println(books.filter { it.autores.contains("$autor") }.map(Book::titulo))
 }
 class Book(val titulo:String, val autores:List<String>)
 
+fun whoTookTheCookie(lista: List<String>){
 
+    lista.shuffled()
+    lista.reduce{a1, a2 -> println("$a1 - $a2")
+    a2}
 
-fun whoTookTheCookie(conjunto: MutableSet<String>){
-
-    conjunto.shuffled()
-    var bicho = conjunto.first()
 }
-
-
-
-
 
 //Ejercicio 29
 //Simplificar el siguiente algoritmo utilizando safe call operators.
@@ -334,6 +332,7 @@ fun testNullables() {
     val a4 = A()
     val listA = listOf(a1, a2, a3, a4)
 
+    /*
     listA.forEach {
         //Todo lo que esta dentro del let es cuando it.b NO es nulo.
         //Todo lo que esta dentro del run es cuando it.b ES nulo.
@@ -342,5 +341,13 @@ fun testNullables() {
                 it.d?.let { it.forEach { it?.let{print(it)} } ; println() } ?: run { println("all null") }
             }
         }
+    }
+    */
+
+    listA.forEach {
+        it.b?.let { println(it) } ?: it.c?.let { println(it) } ?: it.d?.let {
+            it.forEach { it?.let { print(it) } }
+            println()
+        } ?: println("all null")
     }
 }
