@@ -67,3 +67,8 @@ distTmp/
 outTmp/
 /test.output
 /kotlin-native/dist
+*.class
+*.kotlin_module
+*.jar
+*.iml
+pruebaAyDS.iml
