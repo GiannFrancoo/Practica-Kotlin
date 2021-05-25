@@ -1,5 +1,7 @@
 package Actividad_8.implementacion_1
 
+import java.lang.Math.pow
+import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.pow
@@ -11,14 +13,15 @@ var distanciaMin : Double = 0.0
 fun main(){
     val begin = System.currentTimeMillis()
 
-    var puntos = generarPuntos(4)
+    inicializacion()
+    var puntos = generarPuntos(pow(10.0,3.0).toInt())
     mostrarPuntos(puntos)
     puntos.sortBy { punto -> punto.x }
     mostrarPuntos(puntos)
     distanciaMin = algoritmoBasico(puntos)
     mostrarSolucion()
 
-    //dyc1(puntos)
+    println("Minimo DYC1 ${dyc1(puntos)}")
 
     val end = System.currentTimeMillis()
 
@@ -60,10 +63,8 @@ fun generarPuntos(cant: Int): Array<Punto> {
     var punto : Punto
     var n = cant
 
-    //Random.nextInt(0, pow(10.0,9.0).toInt()
-
     while(n > 0){
-        punto = Punto(Random.nextInt(0, 10), Random.nextInt(0, 10))
+        punto = Punto(Random.nextInt(0, pow(10.0,9.0).toInt()), Random.nextInt(0, pow(10.0,9.0).toInt()))
 
         if(!puntos.any { par -> ((par.x == punto.x) && (par.y == punto.y)) }) {
             --n
@@ -82,6 +83,14 @@ fun distancia(p1:Punto, p2:Punto):Double{
     )
 }
 
+/*
+    Inicialización de las variables min y distanciaMin
+ */
+fun inicializacion(){
+    min.add(0, Punto(0,0))
+    min.add(1, Punto(0,0))
+    distanciaMin = Double.MAX_VALUE
+}
 
 
 /*
@@ -92,10 +101,7 @@ fun distancia(p1:Punto, p2:Punto):Double{
  */
 fun algoritmoBasico(puntos: Array<Punto>) : Double{
     var par = arrayOf(Punto(0,0), Punto(0,0))
-    var distanciaPar = 0.0
-    min.add(0, Punto(0,0))
-    min.add(1, Punto(0,0))
-    distanciaMin = 9999.99
+    var distanciaPar = Double.MIN_VALUE
 
     for(i in puntos.indices){
         par[0] = puntos[i]
@@ -113,6 +119,7 @@ fun algoritmoBasico(puntos: Array<Punto>) : Double{
     return distanciaMin
 }
 
+
 /*
     Primera implementación con dividir y conquistar
     Se asume que los puntos estan ordenados por X
@@ -129,10 +136,11 @@ fun dyc1(puntos: Array<Punto>): Double {
     else {
         m = puntos.size / 2
         d1 = dyc1(puntos.slice(0 until m).toTypedArray())
-        d2 = dyc1(puntos.slice(m..(puntos.size)).toTypedArray())
+        d2 = dyc1(puntos.slice(m until (puntos.size)).toTypedArray())
         d = min(d1, d2)
-        var franja = crearFranja(puntos, m, d)
-        d3 = minimoEnFranja(franja.toTypedArray())
+        var franja = crearFranja(puntos, m, d) //Creo la franja con los puntos que estan dentro
+        franja.sortBy { punto -> punto.y } //Ordeno por Y
+        d3 = minimoEnFranja(franja.toTypedArray(), d) //Consigo el minimo en la franja
     }
 
     return min(d, d3)
@@ -140,17 +148,39 @@ fun dyc1(puntos: Array<Punto>): Double {
 
 fun crearFranja(puntos: Array<Punto>, m:Int, d:Double): MutableList<Punto> {
     var franja : MutableList<Punto> = ArrayList<Punto>()
-    for(i in ceil(m-d).toInt() until ceil(m+d).toInt()){
-        franja.add(puntos[i])
-    }
 
-    // Ordenar por Y?
+    for(punto in puntos){
+        if(abs(punto.x - m) < d){
+            franja.add(punto)
+        }
+    }
     return franja
 }
 
-fun minimoEnFranja(franja: Array<Punto>):Double{
-    return 1.0
+fun minimoEnFranja(franja: Array<Punto>, d: Double):Double{
+
+    var distanciaMinFranja = Double.MAX_VALUE
+
+    for(i in 0 until franja.size-1){
+        var puntoActual = franja[i]
+        var puntoSiguiente = franja[i+1]
+
+        var j = i+1
+        while((j < franja.size) && (puntoSiguiente.y < (puntoActual.y + d))){
+            puntoSiguiente = franja[j]
+
+            var distancia = distancia(puntoActual, puntoSiguiente)
+            if(distancia < distanciaMinFranja){
+                distanciaMinFranja = distancia
+            }
+
+            j++
+        }
+    }
+
+    return distanciaMinFranja
 }
+
 
 
 
