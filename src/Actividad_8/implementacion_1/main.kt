@@ -2,26 +2,23 @@ package Actividad_8.implementacion_1
 
 import java.lang.Math.pow
 import kotlin.math.abs
-import kotlin.math.ceil
-import kotlin.math.min
 import kotlin.math.pow
 import kotlin.random.Random
 
 fun main(){
-    val begin = System.currentTimeMillis()
+    //val begin = System.currentTimeMillis()
 
     var puntos = generarPuntos(pow(10.0,3.0).toInt())
-    mostrarPuntos(puntos)
+    //mostrarPuntos(puntos)
     puntos.sortBy { punto -> punto.x }
-    mostrarPuntos(puntos)
+    //mostrarPuntos(puntos)
 
     mostrarSolucion(algoritmoBasico(puntos))
-
     mostrarSolucion(dyc1(puntos))
+    //mostrarSolucion(dyc2(puntos))
 
-    val end = System.currentTimeMillis()
-
-    println("Tiempo: ${(end-begin)/1000}")
+    //val end = System.currentTimeMillis()
+    //println("Tiempo: ${(end-begin)/1000}")
 }
 
 /*
@@ -122,25 +119,26 @@ fun algoritmoBasico(puntos: Array<Punto>) : Pair<Par, Double> {
 /*
     Primera implementación con dividir y conquistar
     Se asume que los puntos estan ordenados por X
+    Se ordena por Y a la hora de ver la franja
 */
 fun dyc1(puntos: Array<Punto>): Pair<Par, Double> {
     val d : Pair<Par, Double>
     val d3 : Pair<Par, Double>
-    val m : Int
+    val mitadArreglo : Int
     val d1 : Pair<Par, Double>
     val d2 : Pair<Par, Double>
 
     if(puntos.size <= 3)
         return algoritmoBasico(puntos)
     else {
-        m = puntos.size / 2
-        d1 = dyc1(puntos.slice(0 until m).toTypedArray())
-        d2 = dyc1(puntos.slice(m until (puntos.size)).toTypedArray())
+        mitadArreglo = puntos.size / 2
+        var mitadFranja = puntos[mitadArreglo].x
+        d1 = dyc1(puntos.slice(0 until mitadArreglo).toTypedArray())
+        d2 = dyc1(puntos.slice(mitadArreglo until (puntos.size)).toTypedArray())
 
-        //me quedo con el minimo
         d = minimo(d1,d2)
 
-        var franja = crearFranja(puntos, m, d.second) //Creo la franja con los puntos que estan dentro
+        var franja = crearFranja(puntos, mitadFranja, d.second) //Creo la franja con los puntos que estan dentro
         franja.sortBy { punto -> punto.y } //Ordeno por Y
         d3 = minimoEnFranja(franja.toTypedArray(), d.second) //Consigo el minimo en la franja
     }
@@ -164,6 +162,7 @@ fun crearFranja(puntos: Array<Punto>, m:Int, d:Double): MutableList<Punto> {
             franja.add(punto)
         }
     }
+
     return franja
 }
 
@@ -194,8 +193,25 @@ fun minimoEnFranja(franja: Array<Punto>, d: Double):Pair<Par, Double>{
     return Pair(min, distanciaMinFranja)
 }
 
+/*
+   Segunda implementación con dividir y conquistar
+   Se asume que los puntos estan ordenados por X
+   A diferencia, se ordena por Y previamente
+ */
+/*
+fun dyc2(puntos: Array<Punto>): Pair<Par, Double>{
+
+    var arregloY = arrayListOf<Int>(puntos.size)
 
 
 
+    return dyc2(puntos,)
+}
+
+fun dyc2(puntos: Array<Punto>, y: Array<Int>): Pair<Par, Double>{
+
+}
+
+ */
 
 
