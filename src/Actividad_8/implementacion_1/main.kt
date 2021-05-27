@@ -8,14 +8,20 @@ import kotlin.random.Random
 fun main(){
     //val begin = System.currentTimeMillis()
 
-    var puntos = generarPuntos(pow(10.0,3.0).toInt())
+    var puntosOrdenadosPorX = generarPuntos(pow(10.0,3.0).toInt())
     //mostrarPuntos(puntos)
-    puntos.sortBy { punto -> punto.x }
+    puntosOrdenadosPorX.sortBy { punto -> punto.x }
     //mostrarPuntos(puntos)
 
-    mostrarSolucion(algoritmoBasico(puntos))
-    mostrarSolucion(dyc1(puntos))
-    //mostrarSolucion(dyc2(puntos))
+    mostrarSolucion(algoritmoBasico(puntosOrdenadosPorX))
+    mostrarSolucion(dyc1(puntosOrdenadosPorX))
+
+    var puntosOrdenadosPorY = puntosOrdenadosPorX
+    puntosOrdenadosPorY.sortBy { punto -> punto.y }
+    mostrarSolucion(dyc2(puntosOrdenadosPorX, puntosOrdenadosPorY))
+
+
+
 
     //val end = System.currentTimeMillis()
     //println("Tiempo: ${(end-begin)/1000}")
@@ -60,8 +66,8 @@ fun mostrarPuntos(puntos: Array<Punto>){
 /*
     Genera un array, de la cantidad pasada por parametros, de puntos no repetidos
  */
-fun generarPuntos(cant: Int): Array<Punto> {
-    val puntos = mutableSetOf<Punto>()
+fun generarPuntos(cant: Int): ArrayList<Punto> {
+    val puntos = arrayListOf<Punto>()
     var punto : Punto
     var n = cant
 
@@ -73,7 +79,7 @@ fun generarPuntos(cant: Int): Array<Punto> {
             puntos.add(punto)
         }
     }
-    return puntos.toTypedArray()
+    return puntos
 }
 
 /*
@@ -92,7 +98,7 @@ fun distancia(p1:Punto, p2:Punto):Double{
      -> No hay 2 puntos iguales
      -> Previamente esta ordenado
  */
-fun algoritmoBasico(puntos: Array<Punto>) : Pair<Par, Double> {
+fun algoritmoBasico(puntos: ArrayList<Punto>) : Pair<Par, Double> {
     var par = Par(Punto(0,0), Punto(0,0))
     var distanciaPar = Double.MIN_VALUE
     var min = Par(Punto(0,0), Punto(0,0))
@@ -121,24 +127,27 @@ fun algoritmoBasico(puntos: Array<Punto>) : Pair<Par, Double> {
     Se asume que los puntos estan ordenados por X
     Se ordena por Y a la hora de ver la franja
 */
-fun dyc1(puntos: Array<Punto>): Pair<Par, Double> {
+fun dyc1(puntosOrdenadosPorX: ArrayList<Punto>): Pair<Par, Double> {
     val d : Pair<Par, Double>
     val d3 : Pair<Par, Double>
     val mitadArreglo : Int
     val d1 : Pair<Par, Double>
     val d2 : Pair<Par, Double>
 
-    if(puntos.size <= 3)
-        return algoritmoBasico(puntos)
+    if(puntosOrdenadosPorX.size <= 3)
+        return algoritmoBasico(puntosOrdenadosPorX)
     else {
-        mitadArreglo = puntos.size / 2
-        var mitadFranja = puntos[mitadArreglo].x
-        d1 = dyc1(puntos.slice(0 until mitadArreglo).toTypedArray())
-        d2 = dyc1(puntos.slice(mitadArreglo until (puntos.size)).toTypedArray())
+        mitadArreglo = puntosOrdenadosPorX.size / 2
+        var mitadFranja = puntosOrdenadosPorX[mitadArreglo].x
+
+        var izquierdaX = puntosOrdenadosPorX.slice(0 until mitadArreglo) as ArrayList<Punto>
+        var derechaX = puntosOrdenadosPorX.slice(mitadArreglo until (puntosOrdenadosPorX.size)) as ArrayList<Punto>
+
+        d1 = dyc1(izquierdaX)
+        d2 = dyc1(derechaX)
 
         d = minimo(d1,d2)
-
-        var franja = crearFranja(puntos, mitadFranja, d.second) //Creo la franja con los puntos que estan dentro
+        var franja = puntosOrdenadosPorX.filter { abs(mitadFranja - it.x) < d.second } as ArrayList<Punto>//Creo la franja con los puntos que estan dentro
         franja.sortBy { punto -> punto.y } //Ordeno por Y
         d3 = minimoEnFranja(franja.toTypedArray(), d.second) //Consigo el minimo en la franja
     }
@@ -154,20 +163,7 @@ fun minimo(min1: Pair<Par, Double>, min2: Pair<Par, Double>):Pair<Par, Double>{
     return toReturn
 }
 
-fun crearFranja(puntos: Array<Punto>, m:Int, d:Double): MutableList<Punto> {
-    var franja : MutableList<Punto> = ArrayList<Punto>()
-
-    for(punto in puntos){
-        if(abs(punto.x - m) < d){
-            franja.add(punto)
-        }
-    }
-
-    return franja
-}
-
 fun minimoEnFranja(franja: Array<Punto>, d: Double):Pair<Par, Double>{
-
     var distanciaMinFranja = Double.MAX_VALUE
     var min = Par(Punto(0,0), Punto(0,0))
 
@@ -198,20 +194,45 @@ fun minimoEnFranja(franja: Array<Punto>, d: Double):Pair<Par, Double>{
    Se asume que los puntos estan ordenados por X
    A diferencia, se ordena por Y previamente
  */
-/*
-fun dyc2(puntos: Array<Punto>): Pair<Par, Double>{
 
-    var arregloY = arrayListOf<Int>(puntos.size)
+fun dyc2(puntosOrdenadosPorX: ArrayList<Punto>, puntosOrdenadosPorY: ArrayList<Punto>): Pair<Par, Double>{
 
+    var izquierdaY = arrayListOf<Punto>()
+    var derechaY = arrayListOf<Punto>()
 
+    val d : Pair<Par, Double>
+    val d3 : Pair<Par, Double>
+    val mitadArreglo : Int
+    val d1 : Pair<Par, Double>
+    val d2 : Pair<Par, Double>
 
-    return dyc2(puntos,)
+    if(puntosOrdenadosPorX.size <= 3)
+        return algoritmoBasico(puntosOrdenadosPorX)
+    else {
+        mitadArreglo = puntosOrdenadosPorX.size / 2
+        var mitadFranja = puntosOrdenadosPorX[mitadArreglo].x
+
+        //mitades con respecto a X
+        var izquierdaX = puntosOrdenadosPorX.slice(0 until mitadArreglo) as ArrayList<Punto>
+        var derechaX = puntosOrdenadosPorX.slice(mitadArreglo until (puntosOrdenadosPorX.size)) as ArrayList<Punto>
+
+        //mitades con respecto a Y
+        izquierdaY.filter { it.x < mitadFranja }
+        derechaY.filter { it.x >= mitadFranja }
+
+        d1 = dyc2(izquierdaX, izquierdaY)
+        d2 = dyc2(derechaX, derechaY)
+
+        d = minimo(d1,d2)
+
+        var franja = puntosOrdenadosPorY.filter { abs(mitadFranja - it.x) < d.second } as ArrayList<Punto> //Creo la franja con los puntos que estan dentro
+        d3 = minimoEnFranja(franja.toTypedArray(), d.second) //Consigo el minimo en la franja
+    }
+
+    return minimo(d,d3)
+
 }
 
-fun dyc2(puntos: Array<Punto>, y: Array<Int>): Pair<Par, Double>{
 
-}
-
- */
 
 
