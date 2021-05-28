@@ -6,17 +6,27 @@ import kotlin.math.pow
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 
+public var losFor : Long = 0
+
 fun main(){
     var begin : Long = -1
     var end : Long = -1
 
-    var puntosOrdenadosPorX = generarPuntos(pow(2.0,18.0).toInt())
+    var puntosOrdenadosPorX : ArrayList<Punto>
+    var timeInMillis = measureTimeMillis {
+        puntosOrdenadosPorX = generarPuntos(pow(2.0, 16.0).toInt())
+    }
+    println("Generación de los puntos: $timeInMillis")
+
     puntosOrdenadosPorX.sortBy { punto -> punto.x }
 
     var puntosOrdenadosPorY = puntosOrdenadosPorX.clone() as ArrayList<Punto>
+
     puntosOrdenadosPorY.sortBy { punto -> punto.y }
 
-    var executionTime : Long = -1
+
+
+
     /*
         Algoritmo Básico
 
@@ -34,27 +44,28 @@ fun main(){
     /*
         Algoritmo Dividir y Conquistar SIN ordenamiento previo por la coordenada "Y"
      */
+    println("Presione enter para la primera ejecución")
+    readLine()
     println("Algoritmo Dividir y Conquistar SIN ordenamiento previo por la coordenada \"Y\"")
-    begin = System.currentTimeMillis()
-
-    mostrarSolucion(dyc1(puntosOrdenadosPorX))
-
-    end = System.currentTimeMillis()
-    println("Tiempo de ejecucion: ${(end-begin)}")
+    timeInMillis = measureTimeMillis {
+        mostrarSolucion(dyc1(puntosOrdenadosPorX))
+    }
+    println("Tiempo de ejecucion: $timeInMillis")
     println("------------------------------")
-
 
     /*
         Algoritmo Dividir y Conquistar CON ordenamiento previo por la coordenada "Y"
      */
+    println("Presione enter para la segunda ejecución")
+    readLine()
     println("Algoritmo Dividir y Conquistar CON ordenamiento previo por la coordenada \"Y\"")
-    begin = System.currentTimeMillis()
-
-    mostrarSolucion(dyc2(puntosOrdenadosPorX, puntosOrdenadosPorY))
-
-    end = System.currentTimeMillis()
-    println("Tiempo de ejecucion: ${(end-begin)}")
+    timeInMillis = measureTimeMillis {
+        mostrarSolucion(dyc2(puntosOrdenadosPorX, puntosOrdenadosPorY))
+    }
+    println("Tiempo de ejecucion: $timeInMillis")
     println("------------------------------")
+
+    println("$losFor")
 
 }
 
@@ -72,7 +83,6 @@ class Punto (var x: Int, var y: Int){
 class Par(var k: Punto, var v: Punto){
     fun mostrarPar() = "${k.mostrarPunto()} ${v.mostrarPunto()}" //Quizas en mostrar solución hacemos solucion.first.mostrarPar
 }
-
 
 /*
     Muestra las variables gloables, min y distanciaMin
@@ -244,22 +254,32 @@ fun dyc2(puntosOrdenadosPorX: ArrayList<Punto>, puntosOrdenadosPorY: ArrayList<P
         //mitades con respecto a X
         var izquierdaX = puntosOrdenadosPorX.slice(0 until mitadArreglo) as ArrayList<Punto>
         var derechaX = puntosOrdenadosPorX.slice(mitadArreglo until (puntosOrdenadosPorX.size)) as ArrayList<Punto>
-/*
+
         //mitades con respecto a Y
+        /*
         izquierdaY.filter { it.x < mitadFranja }
         derechaY.filter { it.x >= mitadFranja }
-*/
+        */
+        /*
         izquierdaY = puntosOrdenadosPorY.clone() as ArrayList<Punto>
         derechaY = puntosOrdenadosPorY.clone() as ArrayList<Punto>
-        for(i in 0 until izquierdaX.size){
-            derechaY.remove(izquierdaX[i])
-        }
-        for(i in 0 until derechaX.size){
-            izquierdaY.remove(derechaX[i])
+
+        losFor += measureTimeMillis {
+            for(i in 0 until izquierdaX.size){
+
+                derechaY.remove(izquierdaX[i])
+                derechaY.filterNot { it in izquierdaX }
+            }
+            for(i in 0 until derechaX.size){
+                izquierdaY.remove(derechaX[i])
+            }
         }
 
         d1 = dyc2(izquierdaX, izquierdaY)
         d2 = dyc2(derechaX, derechaY)
+        */
+        d1 = dyc2(izquierdaX, puntosOrdenadosPorY)
+        d2 = dyc2(derechaX, puntosOrdenadosPorY)
 
         d = minimo(d1,d2)
 
