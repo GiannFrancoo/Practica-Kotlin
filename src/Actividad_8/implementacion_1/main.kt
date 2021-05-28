@@ -4,27 +4,58 @@ import java.lang.Math.pow
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.random.Random
+import kotlin.system.measureTimeMillis
 
 fun main(){
-    //val begin = System.currentTimeMillis()
+    var begin : Long = -1
+    var end : Long = -1
 
-    var puntosOrdenadosPorX = generarPuntos(pow(10.0,3.0).toInt())
-    //mostrarPuntos(puntos)
+    var puntosOrdenadosPorX = generarPuntos(pow(2.0,18.0).toInt())
     puntosOrdenadosPorX.sortBy { punto -> punto.x }
-    //mostrarPuntos(puntos)
+
+    var puntosOrdenadosPorY = puntosOrdenadosPorX.clone() as ArrayList<Punto>
+    puntosOrdenadosPorY.sortBy { punto -> punto.y }
+
+    var executionTime : Long = -1
+    /*
+        Algoritmo Básico
+
+    println("------------------------------")
+    println("Algoritmo Básico")
+    begin = System.currentTimeMillis()
 
     mostrarSolucion(algoritmoBasico(puntosOrdenadosPorX))
+
+    end = System.currentTimeMillis()
+    println("Tiempo de ejecucion: ${(end-begin)}")
+    println("------------------------------")
+*/
+
+    /*
+        Algoritmo Dividir y Conquistar SIN ordenamiento previo por la coordenada "Y"
+     */
+    println("Algoritmo Dividir y Conquistar SIN ordenamiento previo por la coordenada \"Y\"")
+    begin = System.currentTimeMillis()
+
     mostrarSolucion(dyc1(puntosOrdenadosPorX))
 
-    var puntosOrdenadosPorY = puntosOrdenadosPorX
-    puntosOrdenadosPorY.sortBy { punto -> punto.y }
+    end = System.currentTimeMillis()
+    println("Tiempo de ejecucion: ${(end-begin)}")
+    println("------------------------------")
+
+
+    /*
+        Algoritmo Dividir y Conquistar CON ordenamiento previo por la coordenada "Y"
+     */
+    println("Algoritmo Dividir y Conquistar CON ordenamiento previo por la coordenada \"Y\"")
+    begin = System.currentTimeMillis()
+
     mostrarSolucion(dyc2(puntosOrdenadosPorX, puntosOrdenadosPorY))
 
+    end = System.currentTimeMillis()
+    println("Tiempo de ejecucion: ${(end-begin)}")
+    println("------------------------------")
 
-
-
-    //val end = System.currentTimeMillis()
-    //println("Tiempo: ${(end-begin)/1000}")
 }
 
 /*
@@ -47,10 +78,8 @@ class Par(var k: Punto, var v: Punto){
     Muestra las variables gloables, min y distanciaMin
  */
 fun mostrarSolucion(solucion: Pair<Par, Double>){
-    println("------------------------------")
     println("Par minimo: ${solucion.first.k.mostrarPunto()} / ${solucion.first.v.mostrarPunto()}")
     println("Distancia minima: ${solucion.second}")
-    println("------------------------------")
 }
 
 /*
@@ -215,10 +244,19 @@ fun dyc2(puntosOrdenadosPorX: ArrayList<Punto>, puntosOrdenadosPorY: ArrayList<P
         //mitades con respecto a X
         var izquierdaX = puntosOrdenadosPorX.slice(0 until mitadArreglo) as ArrayList<Punto>
         var derechaX = puntosOrdenadosPorX.slice(mitadArreglo until (puntosOrdenadosPorX.size)) as ArrayList<Punto>
-
+/*
         //mitades con respecto a Y
         izquierdaY.filter { it.x < mitadFranja }
         derechaY.filter { it.x >= mitadFranja }
+*/
+        izquierdaY = puntosOrdenadosPorY.clone() as ArrayList<Punto>
+        derechaY = puntosOrdenadosPorY.clone() as ArrayList<Punto>
+        for(i in 0 until izquierdaX.size){
+            derechaY.remove(izquierdaX[i])
+        }
+        for(i in 0 until derechaX.size){
+            izquierdaY.remove(derechaX[i])
+        }
 
         d1 = dyc2(izquierdaX, izquierdaY)
         d2 = dyc2(derechaX, derechaY)
