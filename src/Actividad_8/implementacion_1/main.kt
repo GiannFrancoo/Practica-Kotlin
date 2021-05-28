@@ -6,40 +6,40 @@ import kotlin.math.pow
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 
-public var losFor : Long = 0
-
 fun main(){
-    var begin : Long = -1
-    var end : Long = -1
 
     var puntosOrdenadosPorX : ArrayList<Punto>
     var timeInMillis = measureTimeMillis {
-        puntosOrdenadosPorX = generarPuntos(pow(2.0, 16.0).toInt())
+        puntosOrdenadosPorX = generarPuntos(pow(2.0, 18.0).toInt())
     }
-    println("Generación de los puntos: $timeInMillis")
+    println("Creación de puntos: $timeInMillis")
 
+    puntosOrdenadosPorX.sortBy { punto -> punto.y }
     puntosOrdenadosPorX.sortBy { punto -> punto.x }
+
+    println("${mostrarPuntos(puntosOrdenadosPorX)}")
 
     var puntosOrdenadosPorY = puntosOrdenadosPorX.clone() as ArrayList<Punto>
 
     puntosOrdenadosPorY.sortBy { punto -> punto.y }
 
+    println("${mostrarPuntos(puntosOrdenadosPorY)}")
 
 
 
     /*
         Algoritmo Básico
-
+    */
+    /*
+    println("Presione enter para el algoritmo de fuerza bruta")
+    readLine()
+    println("Algoritmo de fuerza bruta \"Y\"")
+    timeInMillis = measureTimeMillis {
+        mostrarSolucion(algoritmoBasico(puntosOrdenadosPorX))
+    }
+    println("Tiempo de ejecucion: $timeInMillis")
     println("------------------------------")
-    println("Algoritmo Básico")
-    begin = System.currentTimeMillis()
-
-    mostrarSolucion(algoritmoBasico(puntosOrdenadosPorX))
-
-    end = System.currentTimeMillis()
-    println("Tiempo de ejecucion: ${(end-begin)}")
-    println("------------------------------")
-*/
+    */
 
     /*
         Algoritmo Dividir y Conquistar SIN ordenamiento previo por la coordenada "Y"
@@ -64,8 +64,6 @@ fun main(){
     }
     println("Tiempo de ejecucion: $timeInMillis")
     println("------------------------------")
-
-    println("$losFor")
 
 }
 
@@ -95,7 +93,7 @@ fun mostrarSolucion(solucion: Pair<Par, Double>){
 /*
     Muestra el arreglo de puntos
  */
-fun mostrarPuntos(puntos: Array<Punto>){
+fun mostrarPuntos(puntos: ArrayList<Punto>){
     for(i in puntos.indices){
         print("${puntos.elementAt(i).mostrarPunto()}")
     }
@@ -256,30 +254,22 @@ fun dyc2(puntosOrdenadosPorX: ArrayList<Punto>, puntosOrdenadosPorY: ArrayList<P
         var derechaX = puntosOrdenadosPorX.slice(mitadArreglo until (puntosOrdenadosPorX.size)) as ArrayList<Punto>
 
         //mitades con respecto a Y
-        /*
-        izquierdaY.filter { it.x < mitadFranja }
-        derechaY.filter { it.x >= mitadFranja }
-        */
-        /*
-        izquierdaY = puntosOrdenadosPorY.clone() as ArrayList<Punto>
-        derechaY = puntosOrdenadosPorY.clone() as ArrayList<Punto>
-
-        losFor += measureTimeMillis {
-            for(i in 0 until izquierdaX.size){
-
-                derechaY.remove(izquierdaX[i])
-                derechaY.filterNot { it in izquierdaX }
-            }
-            for(i in 0 until derechaX.size){
-                izquierdaY.remove(derechaX[i])
+        for(p in puntosOrdenadosPorY){
+            when{
+                (p.x < mitadFranja) -> izquierdaY.add(p)
+                (p.x > mitadFranja) -> derechaY.add(p)
+                else ->
+                    if (derechaX[0].y < p.y ){
+                        izquierdaY.add(p)
+                    }
+                    else{
+                        derechaY.add(p)
+                    } //Como no hay puntos iguales, entonces no hace falta el tercer caso
             }
         }
 
         d1 = dyc2(izquierdaX, izquierdaY)
         d2 = dyc2(derechaX, derechaY)
-        */
-        d1 = dyc2(izquierdaX, puntosOrdenadosPorY)
-        d2 = dyc2(derechaX, puntosOrdenadosPorY)
 
         d = minimo(d1,d2)
 
