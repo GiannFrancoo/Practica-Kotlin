@@ -68,7 +68,7 @@ fun main(){
 }
 
 /*
-    Clase que modela un punto
+    Clase que modela un punto(x,y)
 */
 class Punto (var x: Int, var y: Int){
     fun mostrarPunto() = "($x,$y)"
@@ -133,7 +133,7 @@ fun distancia(p1:Punto, p2:Punto):Double{
    Algoritmo basico para encontrar la distancia minima entre un conjunto de puntos O(n^2)
    Convenciones
      -> No hay 2 puntos iguales
-     -> Previamente esta ordenado
+     -> Previamente esta ordenado por x
  */
 fun algoritmoBasico(puntos: ArrayList<Punto>) : Pair<Par, Double> {
     var par = Par(Punto(0,0), Punto(0,0))
@@ -192,6 +192,9 @@ fun dyc1(puntosOrdenadosPorX: ArrayList<Punto>): Pair<Par, Double> {
     return minimo(d,d3)
 }
 
+/*
+    Retorna el Pair<Par,Double> cuya distancia es la minima entra min1,min2.
+ */
 fun minimo(min1: Pair<Par, Double>, min2: Pair<Par, Double>):Pair<Par, Double>{
     var toReturn : Pair<Par, Double>
 
@@ -200,6 +203,9 @@ fun minimo(min1: Pair<Par, Double>, min2: Pair<Par, Double>):Pair<Par, Double>{
     return toReturn
 }
 
+/*
+    Retorna un Pair<Par,Double> cuya distancia es la minima en toda la franja.
+ */
 fun minimoEnFranja(franja: Array<Punto>, d: Double):Pair<Par, Double>{
     var distanciaMinFranja = Double.MAX_VALUE
     var min = Par(Punto(0,0), Punto(0,0))
