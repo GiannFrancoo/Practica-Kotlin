@@ -10,36 +10,35 @@ fun main(){
 
     var puntosOrdenadosPorX : ArrayList<Punto>
     var timeInMillis = measureTimeMillis {
-        puntosOrdenadosPorX = generarPuntos(pow(2.0, 20.0).toInt())
+        puntosOrdenadosPorX = generarPuntos(pow(2.0, 1.0).toInt())
     }
     println("Creación de puntos: $timeInMillis")
 
     puntosOrdenadosPorX.sortBy { punto -> punto.y }
-    puntosOrdenadosPorX.sortBy { punto -> punto.x }
-
 
     var puntosOrdenadosPorY = puntosOrdenadosPorX.clone() as ArrayList<Punto>
 
-    puntosOrdenadosPorY.sortBy { punto -> punto.y }
+    puntosOrdenadosPorX.sortBy { punto -> punto.x }
+
+    var puntosOrdenadosPorXX = puntosOrdenadosPorX.clone() as ArrayList<Punto>
 
 
     /*
         Algoritmo Básico
     */
-    /*
-    println("Presione enter para el algoritmo de fuerza bruta")
-    readLine()
-    println("Algoritmo de fuerza bruta \"Y\"")
+    //println("Presione enter para el algoritmo de fuerza bruta")
+    //readLine()
+    //println("Algoritmo de fuerza bruta \"Y\"")
     timeInMillis = measureTimeMillis {
         mostrarSolucion(algoritmoBasico(puntosOrdenadosPorX))
     }
     println("Tiempo de ejecucion: $timeInMillis")
     println("------------------------------")
-    */
+
 
     /*
         Algoritmo Dividir y Conquistar SIN ordenamiento previo por la coordenada "Y"
-     */
+    */
     println("Presione enter para la primera ejecución")
     readLine()
     println("Algoritmo Dividir y Conquistar SIN ordenamiento previo por la coordenada \"Y\"")
@@ -56,7 +55,7 @@ fun main(){
     readLine()
     println("Algoritmo Dividir y Conquistar CON ordenamiento previo por la coordenada \"Y\"")
     timeInMillis = measureTimeMillis {
-        mostrarSolucion(dyc2(puntosOrdenadosPorX, puntosOrdenadosPorY))
+        mostrarSolucion(dyc2(puntosOrdenadosPorXX, puntosOrdenadosPorY))
     }
     println("Tiempo de ejecucion: $timeInMillis")
     println("------------------------------")
@@ -100,16 +99,23 @@ fun mostrarPuntos(puntos: ArrayList<Punto>){
 fun generarPuntos(cant: Int): ArrayList<Punto> {
     val puntos = arrayListOf<Punto>()
     var punto : Punto
-    var n = cant
 
-    while(n > 0){
+    for(i in 0..cant){
+        punto = Punto(Random.nextInt(0, pow(10.0,9.0).toInt()), Random.nextInt(0, pow(10.0,9.0).toInt()))
+        puntos.add(punto)
+    }
+
+    /* Activar este while en vez del for, para no tener puntos iguales en X,Y
+    while(cant > 0){
         punto = Punto(Random.nextInt(0, pow(10.0,9.0).toInt()), Random.nextInt(0, pow(10.0,9.0).toInt()))
 
         if(!puntos.any { par -> ((par.x == punto.x) && (par.y == punto.y)) }) {
-            --n
+            --cant
             puntos.add(punto)
         }
     }
+    */
+
     return puntos
 }
 
@@ -178,13 +184,16 @@ fun dyc1(puntosOrdenadosPorX: ArrayList<Punto>): Pair<Par, Double> {
         d2 = dyc1(derechaX)
 
         d = minimo(d1,d2)
+
+        puntosOrdenadosPorX.sortBy { punto -> punto.y } //Ordeno por Y
         var franja = puntosOrdenadosPorX.filter { abs(mitadFranja - it.x) < d.second } as ArrayList<Punto>//Creo la franja con los puntos que estan dentro
-        franja.sortBy { punto -> punto.y } //Ordeno por Y
+
         d3 = minimoEnFranja(franja.toTypedArray(), d.second) //Consigo el minimo en la franja
     }
 
     return minimo(d,d3)
 }
+
 
 /*
     Retorna el Pair<Par,Double> cuya distancia es la minima entra min1,min2.
@@ -226,15 +235,13 @@ fun minimoEnFranja(franja: Array<Punto>, d: Double):Pair<Par, Double>{
     return Pair(min, distanciaMinFranja)
 }
 
+
 /*
    Segunda implementación con dividir y conquistar
    Se asume que los puntos estan ordenados por X
    A diferencia, se ordena por Y previamente
  */
 fun dyc2(puntosOrdenadosPorX: ArrayList<Punto>, puntosOrdenadosPorY: ArrayList<Punto>): Pair<Par, Double>{
-
-    var izquierdaY = arrayListOf<Punto>()
-    var derechaY = arrayListOf<Punto>()
 
     val d : Pair<Par, Double>
     val d3 : Pair<Par, Double>
@@ -253,6 +260,12 @@ fun dyc2(puntosOrdenadosPorX: ArrayList<Punto>, puntosOrdenadosPorY: ArrayList<P
         var derechaX = puntosOrdenadosPorX.slice(mitadArreglo until (puntosOrdenadosPorX.size)) as ArrayList<Punto>
 
         //mitades con respecto a Y
+
+        var izquierdaY = arrayListOf<Punto>()
+        var derechaY = arrayListOf<Punto>()
+
+        //mitades con respecto a Y
+
         var postIzqY = 0
         var postDerY = 0
         for(i in 0 until puntosOrdenadosPorY.size){
@@ -265,9 +278,10 @@ fun dyc2(puntosOrdenadosPorX: ArrayList<Punto>, puntosOrdenadosPorY: ArrayList<P
                     }
                     else{
                         derechaY.add(postDerY++, puntosOrdenadosPorY[i])
-                    } //Como no hay puntos iguales, entonces no hace falta el tercer caso
+                    }
             }
         }
+
 
         d1 = dyc2(izquierdaX, izquierdaY)
         d2 = dyc2(derechaX, derechaY)

@@ -95,60 +95,61 @@ public class Main {
     }
 
     public static Par min(Par d1, Par d2) {
-      Par respuesta;
+        Par respuesta;
 
-      if(d1.distancia < d2.distancia) {
-          respuesta = d1;
-      } else {
-          respuesta = d2;
-      }
+        if(d1.distancia < d2.distancia) {
+            respuesta = d1;
+        } else {
+            respuesta = d2;
+        }
 
-      return respuesta;
+        return respuesta;
     }
 
     public static Par algoritmoBasico(List<? extends Punto> puntos) {
         if (puntos.size() < 2)
             return null;
+
         Par par = new Par(puntos.get(0), puntos.get(1));
-        if (puntos.size() > 2) {
-            for (int i = 0; i < puntos.size() - 1; i++) {
-                Punto punto1 = puntos.get(i);
-                for (int j = i + 1; j < puntos.size(); j++) {
-                    Punto punto2 = puntos.get(j);
-                    double distancia = distancia(punto1, punto2);
-                    if (distancia < par.distancia)
-                        par.update(punto1, punto2, distancia);
-                }
+
+        for (int i = 0; i < puntos.size() - 1; i++) {
+            Punto punto1 = puntos.get(i);
+            for (int j = i + 1; j < puntos.size(); j++) {
+                Punto punto2 = puntos.get(j);
+                double distancia = distancia(punto1, punto2);
+                if (distancia < par.distancia)
+                    par.update(punto1, punto2, distancia);
             }
         }
+
         return par;
     }
 
     public static void ordenarPorX(List<? extends Punto> points) {
         Collections.sort(points, new Comparator<Punto>() {
-                public int compare(Punto punto1, Punto punto2)
-                {
-                    if (punto1.x < punto2.x)
-                        return -1;
-                    if (punto1.x > punto2.x)
-                        return 1;
-                    return 0;
+                    public int compare(Punto punto1, Punto punto2)
+                    {
+                        if (punto1.x < punto2.x)
+                            return -1;
+                        if (punto1.x > punto2.x)
+                            return 1;
+                        return 0;
+                    }
                 }
-            }
         );
     }
 
     public static void ordenarPorY(List<? extends Punto> points) {
         Collections.sort(points, new Comparator<Punto>() {
-                public int compare(Punto punto1, Punto punto2)
-                {
-                    if (punto1.y < punto2.y)
-                        return -1;
-                    if (punto1.y > punto2.y)
-                        return 1;
-                    return 0;
+                    public int compare(Punto punto1, Punto punto2)
+                    {
+                        if (punto1.y < punto2.y)
+                            return -1;
+                        if (punto1.y > punto2.y)
+                            return 1;
+                        return 0;
+                    }
                 }
-            }
         );
     }
 
@@ -175,8 +176,6 @@ public class Main {
 
         return min(d, minimoEnFranja(franja, d));
     }
-
-
 
     public static Par DyC2(List<? extends Punto> puntosOrdenadosPorX, List<? extends Punto> puntosOrdenadosPorY) {
 
@@ -225,14 +224,15 @@ public class Main {
     }
 
     private static Par minimoEnFranja(List<? extends Punto> franja, Par parMinimo) {
+        Par parMinimoEnFranja = new Par(parMinimo.punto1, parMinimo.punto2);
         for (int i = 0; i < franja.size() - 1; i++) {
             for (int j = i + 1; j < franja.size() && ((franja.get(j).y - franja.get(i).y) < parMinimo.distancia); j++) {
                 double distancia = distancia(franja.get(j), franja.get(i));
-                if (distancia < parMinimo.distancia) {
-                    parMinimo.update(franja.get(j), franja.get(i), distancia);
+                if (distancia < parMinimoEnFranja.distancia) {
+                    parMinimoEnFranja.update(franja.get(j), franja.get(i), distancia);
                 }
             }
         }
-        return parMinimo;
+        return parMinimoEnFranja;
     }
 }
