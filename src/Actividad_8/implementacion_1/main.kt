@@ -6,18 +6,21 @@ import kotlin.math.pow
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 
-var umbral = 10
+var umbral = 3
 
 fun main(){
-    var pot = 20.0
+
+    print("Ingrese la potencia a generar la cantidad de puntos: ")
+    var pot = readLine()?.toDouble() ?: 0.0
+
     var cant = pow(2.0,pot).toInt()
 
     var puntosOrdenadosPorX : ArrayList<Punto>
     var timeInMillis = measureTimeMillis {
         puntosOrdenadosPorX = generarPuntos(cant)
     }
-    //println("Creación de puntos: $timeInMillis")
-    println("con $pot")
+    println("Creación de 2^$pot puntos: $timeInMillis ms")
+    println()
 
     puntosOrdenadosPorX.sortBy { punto -> punto.y }
 
@@ -31,45 +34,36 @@ fun main(){
     /*
         Algoritmo Básico
     */
-    //println("Presione enter para el algoritmo de fuerza bruta")
-    //readLine()
-    //println("Algoritmo de fuerza bruta \"Y\"")
-    //timeInMillis = measureTimeMillis {
-        //mostrarSolucion(algoritmoBasico(puntosOrdenadosPorX))
-        //algoritmoBasico(puntosOrdenadosPorX)
-    //}
-    //println("Tiempo de ejecucion: $timeInMillis")
-    //println("------------------------------")
-    //println("$timeInMillis")
+    if(pot < 13.0) {
+        println("Algoritmo de fuerza bruta \"Y\"")
+        timeInMillis = measureTimeMillis {
+            mostrarSolucion(algoritmoBasico(puntosOrdenadosPorX))
 
+        }
+        println("Tiempo de ejecucion: $timeInMillis ms")
+        println("------------------------------")
+    }
 
     /*
         Algoritmo Dividir y Conquistar SIN ordenamiento previo por la coordenada "Y"
     */
-    //println("Presione enter para la primera ejecución")
-    //readLine()
-    //println("Algoritmo Dividir y Conquistar SIN ordenamiento previo por la coordenada \"Y\"")
+    println("Algoritmo Dividir y Conquistar SIN ordenamiento previo por la coordenada \"Y\"")
     timeInMillis = measureTimeMillis {
-        //mostrarSolucion(dyc1(puntosOrdenadosPorX))
-        dyc1(puntosOrdenadosPorX)
+        mostrarSolucion(dyc1(puntosOrdenadosPorX))
     }
-    //println("Tiempo de ejecucion: $timeInMillis")
-    //println("------------------------------")
-    println("$timeInMillis")
+    println("Tiempo de ejecucion: $timeInMillis ms")
+    println("------------------------------")
 
     /*
         Algoritmo Dividir y Conquistar CON ordenamiento previo por la coordenada "Y"
      */
-    //println("Presione enter para la segunda ejecución")
-    //readLine()
-    //println("Algoritmo Dividir y Conquistar CON ordenamiento previo por la coordenada \"Y\"")
-    //timeInMillis = measureTimeMillis {
-        //mostrarSolucion(dyc2(puntosOrdenadosPorXX, puntosOrdenadosPorY))
-        //dyc2(puntosOrdenadosPorXX, puntosOrdenadosPorY)
-    //}
-    //println("Tiempo de ejecucion: $timeInMillis")
-    //println("------------------------------")
-    //println("$timeInMillis")
+    println("Algoritmo Dividir y Conquistar CON ordenamiento previo por la coordenada \"Y\"")
+    timeInMillis = measureTimeMillis {
+        mostrarSolucion(dyc2(puntosOrdenadosPorXX, puntosOrdenadosPorY))
+    }
+    println("Tiempo de ejecucion: $timeInMillis ms")
+    println("------------------------------")
+
 }
 
 /*
@@ -91,16 +85,6 @@ class Par(var k: Punto, var v: Punto)
 fun mostrarSolucion(solucion: Pair<Par, Double>){
     println("Par minimo: ${solucion.first.k.mostrarPunto()} / ${solucion.first.v.mostrarPunto()}")
     println("Distancia minima: ${solucion.second}")
-}
-
-/*
-    Muestra el arreglo de puntos
- */
-fun mostrarPuntos(puntos: ArrayList<Punto>){
-    for(i in puntos.indices){
-        print(puntos.elementAt(i).mostrarPunto())
-    }
-    println()
 }
 
 /*
