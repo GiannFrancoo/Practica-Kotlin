@@ -10,21 +10,17 @@ fun main(){
 
     var puntosOrdenadosPorX : ArrayList<Punto>
     var timeInMillis = measureTimeMillis {
-        puntosOrdenadosPorX = generarPuntos(pow(2.0, 18.0).toInt())
+        puntosOrdenadosPorX = generarPuntos(pow(2.0, 20.0).toInt())
     }
     println("Creación de puntos: $timeInMillis")
 
     puntosOrdenadosPorX.sortBy { punto -> punto.y }
     puntosOrdenadosPorX.sortBy { punto -> punto.x }
 
-    println("${mostrarPuntos(puntosOrdenadosPorX)}")
 
     var puntosOrdenadosPorY = puntosOrdenadosPorX.clone() as ArrayList<Punto>
 
     puntosOrdenadosPorY.sortBy { punto -> punto.y }
-
-    println("${mostrarPuntos(puntosOrdenadosPorY)}")
-
 
 
     /*
@@ -78,9 +74,7 @@ class Punto (var x: Int, var y: Int){
     Clase que modela un par, con key y value
     Esta clase es modelada porque la clase pair no acepta modificar los valores
  */
-class Par(var k: Punto, var v: Punto){
-    fun mostrarPar() = "${k.mostrarPunto()} ${v.mostrarPunto()}" //Quizas en mostrar solución hacemos solucion.first.mostrarPar
-}
+class Par(var k: Punto, var v: Punto)
 
 /*
     Muestra las variables gloables, min y distanciaMin
@@ -95,7 +89,7 @@ fun mostrarSolucion(solucion: Pair<Par, Double>){
  */
 fun mostrarPuntos(puntos: ArrayList<Punto>){
     for(i in puntos.indices){
-        print("${puntos.elementAt(i).mostrarPunto()}")
+        print(puntos.elementAt(i).mostrarPunto())
     }
     println()
 }
@@ -237,7 +231,6 @@ fun minimoEnFranja(franja: Array<Punto>, d: Double):Pair<Par, Double>{
    Se asume que los puntos estan ordenados por X
    A diferencia, se ordena por Y previamente
  */
-
 fun dyc2(puntosOrdenadosPorX: ArrayList<Punto>, puntosOrdenadosPorY: ArrayList<Punto>): Pair<Par, Double>{
 
     var izquierdaY = arrayListOf<Punto>()
@@ -260,16 +253,18 @@ fun dyc2(puntosOrdenadosPorX: ArrayList<Punto>, puntosOrdenadosPorY: ArrayList<P
         var derechaX = puntosOrdenadosPorX.slice(mitadArreglo until (puntosOrdenadosPorX.size)) as ArrayList<Punto>
 
         //mitades con respecto a Y
-        for(p in puntosOrdenadosPorY){
+        var postIzqY = 0
+        var postDerY = 0
+        for(i in 0 until puntosOrdenadosPorY.size){
             when{
-                (p.x < mitadFranja) -> izquierdaY.add(p)
-                (p.x > mitadFranja) -> derechaY.add(p)
+                (puntosOrdenadosPorY[i].x < mitadFranja) -> izquierdaY.add(postIzqY++, puntosOrdenadosPorY[i])
+                (puntosOrdenadosPorY[i].x > mitadFranja) -> derechaY.add(postDerY++, puntosOrdenadosPorY[i])
                 else ->
-                    if (derechaX[0].y < p.y ){
-                        izquierdaY.add(p)
+                    if (derechaX[0].y < puntosOrdenadosPorY[i].y){
+                        izquierdaY.add(postIzqY++, puntosOrdenadosPorY[i])
                     }
                     else{
-                        derechaY.add(p)
+                        derechaY.add(postDerY++, puntosOrdenadosPorY[i])
                     } //Como no hay puntos iguales, entonces no hace falta el tercer caso
             }
         }
@@ -286,7 +281,4 @@ fun dyc2(puntosOrdenadosPorX: ArrayList<Punto>, puntosOrdenadosPorY: ArrayList<P
     return minimo(d,d3)
 
 }
-
-
-
 
